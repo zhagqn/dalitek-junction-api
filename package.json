@@ -1,15 +1,29 @@
 {
-  "name": "dalitek-junction-api",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@dalitek/junction-api",
+  "version": "0.2.2",
+  "license": "MIT",
+  "author": "zhagqn",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "demo": "vue-cli-service demo",
+    "docs": "npm run docs:serve",
+    "docs:build": "vue-cli-service docs --mode build",
+    "docs:serve": "vue-cli-service docs --mode serve",
+    "prepublish": "vue-cli-service lint && vue-cli-service docs --mode build && vue-cli-service build",
+    "start": "vue-cli-service serve"
   },
+  "main": "dist/junction-api.common.js",
+  "module": "dist/junction-api.esm.js",
+  "unpkg": "dist/junction-api.umd.min.js",
+  "files": [
+    "dist",
+    "src"
+  ],
   "dependencies": {
-    "core-js": "^2.6.5",
-    "vue": "^2.6.10"
+    "axios": "^0.19.0",
+    "core-js": "^2.6.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.9.0",
@@ -18,6 +32,10 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
+    "vue": "^2.6.10",
+    "vue-cli-plugin-p11n": "^0.3.0",
     "vue-template-compiler": "^2.6.10"
-  }
+  },
+  "jsdelivr": "dist/dalitek-junction-api.umd.min.js",
+  "sideeffects": false
 }
