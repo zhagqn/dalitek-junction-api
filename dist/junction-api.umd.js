@@ -60,10 +60,13 @@
     return target;
   }
 
-  var http = axios.create();
+  var http = {};
   var defaultParams = {};
 
-  http.setup = function (options, params) {
+  http.setup = function () {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var fly = arguments.length > 2 ? arguments[2] : undefined;
     var baseURL = options.baseURL;
     var hotel_id = params.hotel_id,
         restaurant_id = params.restaurant_id,
@@ -72,7 +75,15 @@
         device_name = params.device_name,
         app_name = params.app_name,
         point_type = params.point_type;
-    if (baseURL) http.defaults.baseURL = baseURL;
+
+    if (fly) {
+      http.request = fly;
+      http.request.config.baseURL = baseURL;
+    } else {
+      http.request = axios.create();
+      if (baseURL) http.request.defaults.baseURL = baseURL;
+    }
+
     if (hotel_id) defaultParams.hotel_id = hotel_id;
     if (restaurant_id) defaultParams.restaurant_id = restaurant_id;
     if (device_type) defaultParams.device_type = device_type;
@@ -81,70 +92,71 @@
     if (app_name) defaultParams.app_name = app_name;
     if (point_type) defaultParams.point_type = point_type;
     http.defaultParams = defaultParams;
+    http.request.interceptors.request.use(function (config) {
+      config.params = config.params || {};
+      Object.assign(config.params, defaultParams);
+      return config;
+    }, function (error) {
+      Promise.reject(error);
+    });
+    http.request.interceptors.response.use(function (res) {
+      return res.data.data;
+    }, function (error) {
+      var msg = "";
+
+      if (error && error.response) {
+        switch (error.response.status) {
+          case 400:
+            msg = "请求错误";
+            break;
+
+          case 404:
+            msg = "\u8BF7\u6C42\u5730\u5740\u51FA\u9519: ".concat(error.response.config.url);
+            break;
+
+          case 408:
+            msg = "请求超时";
+            break;
+
+          case 500:
+            {
+              msg = {
+                msg: "服务器错误",
+                error: error.response.data
+              };
+              break;
+            }
+
+          case 501:
+            msg = "服务未实现";
+            break;
+
+          case 502:
+            msg = "网关错误";
+            break;
+
+          case 503:
+            msg = "服务不可用";
+            break;
+
+          case 504:
+            msg = "网关超时";
+            break;
+
+          case 505:
+            msg = "HTTP版本不受支持";
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      return Promise.reject(msg);
+    });
   };
 
-  http.interceptors.request.use(function (config) {
-    config.params = config.params || {};
-    Object.assign(config.params, defaultParams);
-    return config;
-  }, function (error) {
-    Promise.reject(error);
-  });
-  http.interceptors.response.use(function (res) {
-    return res.data.data;
-  }, function (error) {
-    var msg = "";
-
-    if (error && error.response) {
-      switch (error.response.status) {
-        case 400:
-          msg = "请求错误";
-          break;
-
-        case 404:
-          msg = "\u8BF7\u6C42\u5730\u5740\u51FA\u9519: ".concat(error.response.config.url);
-          break;
-
-        case 408:
-          msg = "请求超时";
-          break;
-
-        case 500:
-          {
-            msg = {
-              msg: "服务器错误",
-              error: error.response.data
-            };
-            break;
-          }
-
-        case 501:
-          msg = "服务未实现";
-          break;
-
-        case 502:
-          msg = "网关错误";
-          break;
-
-        case 503:
-          msg = "服务不可用";
-          break;
-
-        case 504:
-          msg = "网关超时";
-          break;
-
-        case 505:
-          msg = "HTTP版本不受支持";
-          break;
-
-        default:
-          break;
-      }
-    }
-
-    return Promise.reject(msg);
-  });
+  http.setup();
 
   var cart = {
     get: function get() {
@@ -386,7 +398,7 @@
     batch: function batch(ids) {
       return http.get("page/batch/?page_id=".concat(ids.join(",")));
     },
-    // page_type: "info_list"
+    // page_type: "info_list" "info_page"
     search: function search(lang_agnostic_id, page_type) {
       var params = {
         page_type: page_type,
@@ -400,7 +412,7 @@
     butler_startpage: function butler_startpage() {
       return http.get("/page/butler_startpage/");
     },
-    bulter_welcomePage: function bulter_welcomePage() {
+    bulter_welcomepage: function bulter_welcomepage() {
       return http.get("/page/butler_welcomepage/");
     },
     bulter_homepage: function bulter_homepage() {
@@ -428,15 +440,15 @@
 
   var util = {
     now: function now() {
-      return http.get("/util/now/");
+      return http.request.get("/util/now/");
     },
     qr_code: function qr_code(code) {
-      return "/util/qr_code/?code=".concat(code);
+      return http.request.get("/util/qr_code/?code=".concat(code));
     }
   };
 
-  var setup = function setup(axiosOptions, defaultParams) {
-    http.setup(axiosOptions, defaultParams);
+  var setup = function setup(axiosOptions, defaultParams, fly) {
+    http.setup(axiosOptions, defaultParams, fly);
   };
 
   var apis = {
@@ -458,8 +470,9 @@
     if (install.installed) return;
     install.installed = true;
     var axiosOptions = initOptions.axiosOptions,
-        defaultParams = initOptions.defaultParams;
-    setup(axiosOptions, defaultParams);
+        defaultParams = initOptions.defaultParams,
+        fly = initOptions.fly;
+    setup(axiosOptions, defaultParams, fly);
     Vue.prototype.$api = _objectSpread2({}, apis, {
       setup: setup
     });

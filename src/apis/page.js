@@ -8,7 +8,7 @@ const page = {
   batch(ids) {
     return http.get(`page/batch/?page_id=${ids.join(",")}`);
   },
-  // page_type: "info_list"
+  // page_type: "info_list" "info_page"
   search(lang_agnostic_id, page_type) {
     let params = {
       page_type,
@@ -22,7 +22,7 @@ const page = {
   butler_startpage() {
     return http.get(`/page/butler_startpage/`);
   },
-  bulter_welcomePage() {
+  bulter_welcomepage() {
     return http.get(`/page/butler_welcomepage/`);
   },
   bulter_homepage: () => {

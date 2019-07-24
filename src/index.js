@@ -11,8 +11,8 @@ import page from "./apis/page";
 import room_order from "./apis/room_order";
 import util from "./apis/util";
 
-const setup = (axiosOptions, defaultParams) => {
-  http.setup(axiosOptions, defaultParams);
+const setup = (axiosOptions, defaultParams, fly) => {
+  http.setup(axiosOptions, defaultParams, fly);
 };
 
 const apis = {
@@ -33,8 +33,8 @@ const apis = {
 const install = function(Vue, initOptions) {
   if (install.installed) return;
   install.installed = true;
-  let { axiosOptions, defaultParams } = initOptions;
-  setup(axiosOptions, defaultParams);
+  let { axiosOptions, defaultParams, fly } = initOptions;
+  setup(axiosOptions, defaultParams, fly);
   Vue.prototype.$api = { ...apis, setup };
 };
 
