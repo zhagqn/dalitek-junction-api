@@ -42,13 +42,13 @@ const customer = {
   ) {
     switch (type) {
       case "phone":
-        return http.post(`/customer/login/`, {
+        return http.request.post(`/customer/login/`, {
           phone,
           password,
           security_code
         });
       case "wechat":
-        return http.post(`/customer/login/`, {
+        return http.request.post(`/customer/login/`, {
           hotel_id,
           restaurant_id,
           wechat_official_login,
@@ -57,12 +57,12 @@ const customer = {
           code
         });
       case "test":
-        return http.post(`/customer/login/`, {
+        return http.request.post(`/customer/login/`, {
           cts_card_number,
           cts_password
         });
       case "uuid":
-        return http.post(`/customer/login/`, {
+        return http.request.post(`/customer/login/`, {
           uuid_register,
           customer_uuid
         });
@@ -71,7 +71,7 @@ const customer = {
     }
   },
   point(customer_uuid, point_type) {
-    return http.get(
+    return http.request.get(
       `/customer/point/?customer_uuid=${customer_uuid}&point_type=${point_type}`
     );
   }

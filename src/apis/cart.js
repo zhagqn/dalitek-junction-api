@@ -2,7 +2,7 @@ import http from "../http";
 
 const cart = {
   get() {
-    return http.get(`/cart/`);
+    return http.request.get(`/cart/`);
   },
   size() {
     return http.get(`/cart/size/`);
