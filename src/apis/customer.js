@@ -49,11 +49,17 @@ const customer = {
         });
       case "wechat":
         return http.request.post(`/customer/login/`, {
-          hotel_id,
-          restaurant_id,
-          wechat_official_login,
-          wechat_mini_program_login,
-          auto_wechat_register,
+          hotel_id: hotel_id ? hotel_id : http.defaultParams.hotel_id,
+          restaurant_id: restaurant_id
+            ? restaurant_id
+            : http.defaultParams.restaurant_id,
+          wechat_official_login: wechat_official_login
+            ? wechat_official_login
+            : 1,
+          wechat_mini_program_login: wechat_mini_program_login
+            ? wechat_mini_program_login
+            : 1,
+          auto_wechat_register: auto_wechat_register ? auto_wechat_register : 1,
           code
         });
       case "test":
@@ -63,7 +69,7 @@ const customer = {
         });
       case "uuid":
         return http.request.post(`/customer/login/`, {
-          uuid_register,
+          uuid_register: uuid_register ? uuid_register : 1,
           customer_uuid
         });
       default:
@@ -73,6 +79,14 @@ const customer = {
   point(customer_uuid, point_type) {
     return http.request.get(
       `/customer/point/?customer_uuid=${customer_uuid}&point_type=${point_type}`
+    );
+  },
+  stats(stats = ["num_unread_order_messages", "num_pending_orders"]) {
+    return http.request.get(`/customer/stats/?stats=${stats.toString()}`);
+  },
+  door_locks(door_password) {
+    return http.request.get(
+      `/customer/door_locks/?door_password=${door_password}`
     );
   }
 };

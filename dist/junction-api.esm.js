@@ -1,5 +1,5 @@
 /*!
- * junction-api v0.2.3 
+ * junction-api v0.2.4 
  * (c) 2019 zhagqn
  * Released under the MIT License.
  */
@@ -289,11 +289,11 @@ var customer = {
 
       case "wechat":
         return http.request.post("/customer/login/", {
-          hotel_id: hotel_id,
-          restaurant_id: restaurant_id,
-          wechat_official_login: wechat_official_login,
-          wechat_mini_program_login: wechat_mini_program_login,
-          auto_wechat_register: auto_wechat_register,
+          hotel_id: hotel_id ? hotel_id : http.defaultParams.hotel_id,
+          restaurant_id: restaurant_id ? restaurant_id : http.defaultParams.restaurant_id,
+          wechat_official_login: wechat_official_login ? wechat_official_login : 1,
+          wechat_mini_program_login: wechat_mini_program_login ? wechat_mini_program_login : 1,
+          auto_wechat_register: auto_wechat_register ? auto_wechat_register : 1,
           code: code
         });
 
@@ -305,7 +305,7 @@ var customer = {
 
       case "uuid":
         return http.request.post("/customer/login/", {
-          uuid_register: uuid_register,
+          uuid_register: uuid_register ? uuid_register : 1,
           customer_uuid: customer_uuid
         });
 
@@ -315,6 +315,14 @@ var customer = {
   },
   point: function point(customer_uuid, point_type) {
     return http.request.get("/customer/point/?customer_uuid=".concat(customer_uuid, "&point_type=").concat(point_type));
+  },
+  stats: function stats() {
+    var _stats = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ["num_unread_order_messages", "num_pending_orders"];
+
+    return http.request.get("/customer/stats/?stats=".concat(_stats.toString()));
+  },
+  door_locks: function door_locks(door_password) {
+    return http.request.get("/customer/door_locks/?door_password=".concat(door_password));
   }
 };
 
@@ -374,6 +382,10 @@ var event = {
 var hotel = {
   guest_profile: function guest_profile() {
     return http.request.get("/hotel/guest_profile/");
+  },
+  access_token: function access_token(door_password) {
+    var token_type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "room_control";
+    return http.request.get("/hotel/guest_profile/?token_type=".concat(token_type, "&door_password=").concat(door_password));
   }
 };
 
@@ -414,6 +426,9 @@ var page = {
   },
   butler_tv_channels: function butler_tv_channels() {
     return http.request.get("/page/butler_tv_channels/");
+  },
+  butler_room_ctrl: function butler_room_ctrl(door_password) {
+    return http.request.get("/page/butler_room_ctrl/?door_password=".concat(door_password));
   }
 };
 

@@ -25,11 +25,16 @@ const page = {
   bulter_welcomepage() {
     return http.request.get(`/page/butler_welcomepage/`);
   },
-  bulter_homepage: () => {
+  bulter_homepage() {
     return http.request.get(`/page/butler_homepage/`);
   },
-  butler_tv_channels: () => {
+  butler_tv_channels() {
     return http.request.get(`/page/butler_tv_channels/`);
+  },
+  butler_room_ctrl(door_password) {
+    return http.request.get(
+      `/page/butler_room_ctrl/?door_password=${door_password}`
+    );
   }
 };
 export default page;
