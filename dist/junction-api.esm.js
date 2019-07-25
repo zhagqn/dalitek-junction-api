@@ -1,5 +1,5 @@
 /*!
- * junction-api v0.2.2 
+ * junction-api v0.2.3 
  * (c) 2019 zhagqn
  * Released under the MIT License.
  */
@@ -154,7 +154,7 @@ http.setup();
 
 var cart = {
   get: function get() {
-    return http.get("/cart/");
+    return http.request.get("/cart/");
   },
   size: function size() {
     return http.get("/cart/size/");
@@ -240,22 +240,22 @@ var cart = {
 
 var customer_address = {
   get: function get() {
-    return http.get("/customer_address/");
+    return http.request.get("/customer_address/");
   }
 };
 
 var customer_order = {
   get: function get(id) {
-    if (id) return http.post("/customer_order/".concat(id, "/"));else return http.post("/customer_order/");
+    if (id) return http.request.post("/customer_order/".concat(id, "/"));else return http.request.post("/customer_order/");
   },
   pay: function pay(orderId, type) {
-    return http.post("/customer_order/".concat(orderId, "/pay/?pay_method=").concat(type));
+    return http.request.post("/customer_order/".concat(orderId, "/pay/?pay_method=").concat(type));
   },
   is_paid: function is_paid(orderId) {
-    return http.get("/customer_order/".concat(orderId, "/is_paid/"));
+    return http.request.get("/customer_order/".concat(orderId, "/is_paid/"));
   },
   mark_paid: function mark_paid(orderId, payment, money) {
-    return http.post("/customer_order/".concat(orderId, "/mark_paid/?").concat(payment, "=").concat(money));
+    return http.request.post("/customer_order/".concat(orderId, "/mark_paid/?").concat(payment, "=").concat(money));
   }
 };
 
@@ -281,14 +281,14 @@ var customer = {
 
     switch (type) {
       case "phone":
-        return http.post("/customer/login/", {
+        return http.request.post("/customer/login/", {
           phone: phone,
           password: password,
           security_code: security_code
         });
 
       case "wechat":
-        return http.post("/customer/login/", {
+        return http.request.post("/customer/login/", {
           hotel_id: hotel_id,
           restaurant_id: restaurant_id,
           wechat_official_login: wechat_official_login,
@@ -298,13 +298,13 @@ var customer = {
         });
 
       case "test":
-        return http.post("/customer/login/", {
+        return http.request.post("/customer/login/", {
           cts_card_number: cts_card_number,
           cts_password: cts_password
         });
 
       case "uuid":
-        return http.post("/customer/login/", {
+        return http.request.post("/customer/login/", {
           uuid_register: uuid_register,
           customer_uuid: customer_uuid
         });
@@ -314,16 +314,16 @@ var customer = {
     }
   },
   point: function point(customer_uuid, point_type) {
-    return http.get("/customer/point/?customer_uuid=".concat(customer_uuid, "&point_type=").concat(point_type));
+    return http.request.get("/customer/point/?customer_uuid=".concat(customer_uuid, "&point_type=").concat(point_type));
   }
 };
 
 var device = {
   get: function get() {
-    return http.get("/device/get/?saveip=1");
+    return http.request.get("/device/get/?saveip=1");
   },
   register: function register(room, validation_code) {
-    return http.post("/device/register/", {
+    return http.request.post("/device/register/", {
       hotel_id: http.defaultParams.hotel_id,
       device_id: http.defaultParams.device_id,
       device_name: http.defaultParams.device_name,
@@ -336,14 +336,14 @@ var device = {
 
 var event = {
   get: function get() {
-    return http.get("/event/");
+    return http.request.get("/event/");
   },
   event_result: {
     get: function get(id) {
-      return http.get("/event/".concat(id, "/event_result/"));
+      return http.request.get("/event/".concat(id, "/event_result/"));
     },
     post: function post(id, event_type) {
-      return http.post("/event/".concat(id, "/event_result/"), {
+      return http.request.post("/event/".concat(id, "/event_result/"), {
         event_type: event_type
       });
     }
@@ -353,7 +353,7 @@ var event = {
         recipient_name = _ref.recipient_name,
         recipient_phone = _ref.recipient_phone,
         address = _ref.address;
-    return http.post("/event/".concat(event_id, "/event_result_address/"), {
+    return http.request.post("/event/".concat(event_id, "/event_result_address/"), {
       recipient_name: recipient_name,
       recipient_phone: recipient_phone,
       address: address
@@ -363,7 +363,7 @@ var event = {
     var airline_code = _ref2.airline_code,
         airline_card_number = _ref2.airline_card_number,
         redeem_code = _ref2.redeem_code;
-    return http.post("/event/claim_item/", {
+    return http.request.post("/event/claim_item/", {
       airline_code: airline_code,
       airline_card_number: airline_card_number,
       redeem_code: redeem_code
@@ -373,13 +373,13 @@ var event = {
 
 var hotel = {
   guest_profile: function guest_profile() {
-    return http.get("/hotel/guest_profile/");
+    return http.request.get("/hotel/guest_profile/");
   }
 };
 
 var image = {
   get: function get() {
-    return http.get("/image/");
+    return http.request.get("/image/");
   }
 };
 
@@ -387,10 +387,10 @@ var qs = require("querystring");
 
 var page = {
   get: function get(id) {
-    return http.get("/page/".concat(id, "/"));
+    return http.request.get("/page/".concat(id, "/"));
   },
   batch: function batch(ids) {
-    return http.get("page/batch/?page_id=".concat(ids.join(",")));
+    return http.request.get("page/batch/?page_id=".concat(ids.join(",")));
   },
   // page_type: "info_list" "info_page"
   search: function search(lang_agnostic_id, page_type) {
@@ -398,37 +398,37 @@ var page = {
       page_type: page_type,
       lang_agnostic_id: lang_agnostic_id
     };
-    return http.get("/page/search/?".concat(qs.stringify(params)));
+    return http.request.get("/page/search/?".concat(qs.stringify(params)));
   },
   hotel: function hotel() {
-    return http.get("/page/hotel/");
+    return http.request.get("/page/hotel/");
   },
   butler_startpage: function butler_startpage() {
-    return http.get("/page/butler_startpage/");
+    return http.request.get("/page/butler_startpage/");
   },
   bulter_welcomepage: function bulter_welcomepage() {
-    return http.get("/page/butler_welcomepage/");
+    return http.request.get("/page/butler_welcomepage/");
   },
   bulter_homepage: function bulter_homepage() {
-    return http.get("/page/butler_homepage/");
+    return http.request.get("/page/butler_homepage/");
   },
   butler_tv_channels: function butler_tv_channels() {
-    return http.get("/page/butler_tv_channels/");
+    return http.request.get("/page/butler_tv_channels/");
   }
 };
 
 var room_order = {
   get: function get(id) {
-    if (id) return http.post("/room_order/".concat(id));else return http.post("/room_order/");
+    if (id) return http.request.post("/room_order/".concat(id));else return http.request.post("/room_order/");
   },
   pay: function pay(orderId, type) {
-    return http.post("/room_order/".concat(orderId, "/pay/?pay_method=").concat(type));
+    return http.request.post("/room_order/".concat(orderId, "/pay/?pay_method=").concat(type));
   },
   is_paid: function is_paid(orderId) {
-    return http.get("/room_order/".concat(orderId, "/is_paid/"));
+    return http.request.get("/room_order/".concat(orderId, "/is_paid/"));
   },
   mark_paid: function mark_paid(orderId, payment, money) {
-    return http.post("/room_order/".concat(orderId, "/mark_paid/?").concat(payment, "=").concat(money));
+    return http.request.post("/room_order/".concat(orderId, "/mark_paid/?").concat(payment, "=").concat(money));
   }
 };
 

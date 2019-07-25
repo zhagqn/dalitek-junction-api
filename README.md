@@ -1,29 +1,31 @@
 # dalitek-junction-api
 
-## Project setup
-```
-yarn install
-```
+## 方法命名规范
 
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
+### 所有接口链式层级和后台目录一致
 
-### Compiles and minifies for production
-```
-yarn run build
-```
+`/util/now/` => `$api.util.now()`
 
-### Run your tests
-```
-yarn run test
-```
+### URL 中带有变量则跳过变量，变量部分改为传参
 
-### Lints and fixes files
-```
-yarn run lint
-```
+`/video/:episode_id/play_info/` => `$api.video.play_info(episode_id)`
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 接口名称一样，HTTP 方法不同
+
+#### GET 方法:
+
+`/cart/` => `$api.cart.get()`
+
+`/cart/:id` => `$api.cart.get(id)`
+
+#### POST 方法:
+
+`/cart/` => `$api.cart.post()`
+
+#### PUT 方法
+
+`/cart/:id` => `$api.cart.update(id)`
+
+#### DELETE 方法
+
+`/cart/:id` => `$api.cart.delete(id)`
