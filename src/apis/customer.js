@@ -88,6 +88,9 @@ const customer = {
     return http.request.get(
       `/customer/door_locks/?door_password=${door_password}`
     );
+  },
+  get_profile() {
+    return http.request.get(`/customer/get_profile/`);
   }
 };
 export default customer;

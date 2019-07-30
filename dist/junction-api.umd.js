@@ -1,5 +1,5 @@
 /*!
- * junction-api v0.2.4 
+ * junction-api v0.2.5 
  * (c) 2019 zhagqn
  * Released under the MIT License.
  */
@@ -329,6 +329,9 @@
     },
     door_locks: function door_locks(door_password) {
       return http.request.get("/customer/door_locks/?door_password=".concat(door_password));
+    },
+    get_profile: function get_profile() {
+      return http.request.get("/customer/get_profile/");
     }
   };
 
